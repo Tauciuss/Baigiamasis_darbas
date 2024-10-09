@@ -6,7 +6,7 @@ const connectDB = async () => {
         console.log('Prisijungėte prie duomenų bazės!');
     } catch (error) {
         console.error('Nepavyko prisijungti prie duomenų bazės:', error.message);
-        process.exit(1); // Exit process with failure
+        process.exit(1);
     }
 };
 
