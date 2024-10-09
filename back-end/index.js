@@ -1,26 +1,33 @@
-import mongoose from 'mongoose';
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import connectDB from './config/database.js'; // Importing database connection function
 
-const config = dotenv.config().parsed;
+// Load environment variables
+dotenv.config();
 
-try {
+// Express app initialization
+const app = express();
 
-    //await mongoose.connect(config.MONGO_URL);
-    await mongoose.connect("mongodb://127.0.0.1:3000/catbank");
-    console.log('Prisijungėte!')
+// Middleware for parsing requests
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json()); // Add if you're working with JSON requests
 
-    const app = express();
+// CORS setup
+app.use(cors({
+    origin: process.env.DEV_CLIENT_URL
+}));
 
-    app.use(express.urlencoded({ extended: true }));
+// MongoDB Connection
+connectDB();
 
-    app.use(cors({
-        origin: config.DEV_CLIENT_URL
-    }));    
+// Define basic route
+app.get('/', (req, res) => {
+    res.send('API is running');
+});
 
-    app.listen(3000);
-
-} catch {
-    console.log('Prisijungimas nepavyko');
-}
+// Start the Express server
+const PORT = 3000;
+app.listen(PORT, () => {
+    console.log(`Serveris veikia: http://127.0.0.1:${PORT}`);
+});
