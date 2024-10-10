@@ -2,6 +2,8 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import connectDB from './config/database.js'; // Duomenu bazes prisijungimas
+import userRoutes from './routes/user.js';
+import accountRoutes from './routes/account.js';
 
 dotenv.config();
 
@@ -16,9 +18,9 @@ app.use(cors({
 
 connectDB();
 
-app.get('/', (req, res) => {
-    res.send('API is running');
-});
+// routes
+app.use('/api/users', userRoutes);
+app.use('/api/accounts', accountRoutes);
 
 const PORT = 3000;
 app.listen(PORT, () => {
