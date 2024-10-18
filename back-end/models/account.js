@@ -1,54 +1,54 @@
-import mongoose, { Schema } from 'mongoose';
-import validator from 'validator';
+import mongoose, { Schema } from "mongoose";
 
-
-const AccountSchema = new Schema({
-    owner: {
-        type: Schema.Types.ObjectId,
-        ref: 'User', 
-        required: true
+// Client modelis
+export default mongoose.model(
+  "Client",
+  new Schema({
+    // Client Name
+    firstName: {
+      type: String,
+      required: true,
+      minLength: 3,
+      maxLength: 20,
     },
+    // Client Last Name
+    secondName: {
+      type: String,
+      required: true,
+      minLength: 3,
+      maxLength: 20,
+    },
+    // Client IBAN
     iban: {
-        type: String,
-        required: true,
-        unique: true,
-        validate: {
-            validator: function (v) {
-                return validator.isIBAN(v);
-            },
-            message: props => `${props.value} neteisingas IBAN!`
-        }
+      type: String, // Changed to String since IBAN may contain letters and leading zeros
+      unique: true,
+      required: true,
+      minLength: 20,
+      maxLength: 34, // IBANs can be up to 34 characters, so adjusted maxLength
     },
-    balance: {
-        type: Number,
-        default: 0,
-        min: [0, "Suma negali būti neigiama"]
+    // Client ID
+    idNumber: {
+      type: String,
+      unique: true,
+      required: true,
+      minLength: 11,
+      maxLength: 11,
     },
-    personalID: {
-        type: String,
-        unique: true,
-        required: true,
-        validate: {
-            validator: function (v) {
-                //Asmeninis ID
-                return /^\d{11}$/.test(v);
-            },
-            message: props => `${props.value} neteisingas asmeninis ID!`
-        }
+    // Client ID Photo
+    idPhoto: {
+      type: String,
+      required: true,
     },
-    //nuotrauka
-    passportCopy: {
-        type: String,
-        required: true
+    wallet: {
+      type: Number,
+      default: 0,
+      min: 0,
     },
-    createdAt: {
-        type: Date,
-        default: Date.now
-    }
-}, {
-    toJSON: {
-        virtuals: true
-    }
-});
-
-export default mongoose.model('Account', AccountSchema);
+    // User reference (the one who created the client)
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+  })
+);

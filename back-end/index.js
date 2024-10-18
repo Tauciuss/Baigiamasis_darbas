@@ -1,28 +1,60 @@
-import express from 'express';
-import cors from 'cors';
-import dotenv from 'dotenv';
-import connectDB from './config/database.js'; // Duomenu bazes prisijungimas
-import userRoutes from './routes/user.js';
-import accountRoutes from './routes/account.js';
+import mongoose from "mongoose";
+import express from "express";
+import cors from "cors";
+import dotenv from "dotenv";
+import session from "express-session";
+import user from "./controllers/user.js";
+import account from "./controllers/account.js";
 
-dotenv.config();
+const config = dotenv.config().parsed;
 
-const app = express();
+// Function to start the server
+const startServer = async () => {
+  // Connect to the database
+  try {
+    await mongoose.connect(config.MONGO_URL); // No options needed
+    console.log("Prisijungėte prie duomenų bazės!");
+  } catch (error) {
+    console.error("Nepavyko prisijungti prie duomenų bazės:", error);
+    return; // Exit if unable to connect to the database
+  }
 
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json()); 
+  // Initialize Express application
+  const app = express();
 
-app.use(cors({
-    origin: process.env.DEV_CLIENT_URL
-}));
+  app.set("trust proxy", 1); // Trust first proxy
 
-connectDB();
+  // Configure session middleware
+  app.use(
+    session({
+      secret: "keyboard cat", // Change this secret for production
+      resave: false,
+      saveUninitialized: false,
+      cookie: { secure: false, maxAge: 1000 * 60 * 60 * 24, httpOnly: true },
+    })
+  );
 
-// routes
-app.use('/api/users', userRoutes);
-app.use('/api/accounts', accountRoutes);
+  app.use(express.urlencoded({ extended: true }));
 
-const PORT = 3000;
-app.listen(PORT, () => {
-    console.log(`Serveris veikia: http://127.0.0.1:${PORT}`);
-});
+  app.use(express.json());
+
+  // CORS configuration
+  app.use(
+    cors({
+      origin: config.DEV_CLIENT_URL, // Allow your frontend origin
+      credentials: true, // Allow credentials to be sent
+    })
+  );
+
+  app.use("/photos", express.static("./uploads"));
+
+  app.use("/api/user", user); // User routes
+  app.use("/api/account", account); // Client routes
+
+  // Start the server
+  app.listen(config.DEV_PORT, () => {
+    console.log(`Server running on port ${config.DEV_PORT}`);
+  });
+};
+
+startServer();
