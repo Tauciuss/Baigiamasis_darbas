@@ -38,7 +38,7 @@ router.get("/accounts", checkAuth, async (req, res) => {
   }
 });
 router.delete("/:id", checkAuth, async (req, res) => {
-  const { id } = req.params; // Get the client ID from the request parameters
+  const { id } = req.params; 
 
   try {
     const account = await Account.findById(id);
@@ -47,14 +47,13 @@ router.delete("/:id", checkAuth, async (req, res) => {
       return res.status(404).json({ message: "Sąskaita nerasta" });
     }
 
-    // Ensure the client can only be deleted if the wallet balance is 0
     if (account.wallet !== 0) {
       return res.status(400).json({
         message: "Sąskaita negali būti ištrinta nebent suma yra 0",
       });
     }
 
-    // If the balance is 0, delete the client
+
     await Account.findByIdAndDelete(id);
 
     res.status(200).json({ message: "Sąskaita sėkmingai ištrinta" });
@@ -67,7 +66,7 @@ router.delete("/:id", checkAuth, async (req, res) => {
 router.get("/:id", checkAuth, async (req, res) => {
   const { id } = req.params;
   try {
-    const account = await Account.findById(id); // Fetch client by ID
+    const account = await Account.findById(id); 
     if (!account) {
       return res.status(404).json({ message: "Sąskaita nerasta" });
     }
@@ -85,7 +84,7 @@ router.put("/:id/balance", async (req, res) => {
   const { wallet } = req.body;
 
   try {
-    const account = await Account.findById(id); // Find the client
+    const account = await Account.findById(id); 
     if (!account) {
       return res.status(404).json({ message: "Sąskaita nerasta" });
     }
@@ -99,7 +98,6 @@ router.put("/:id/balance", async (req, res) => {
   }
 });
 
-// New client creation route
 router.post(  "/create-account",checkAuth, upload.single("idPhoto"), uploadErrorHandler, async (req, res) => {
     try {
       const { firstName, secondName, iban, idNumber } = req.body;
@@ -111,7 +109,6 @@ router.post(  "/create-account",checkAuth, upload.single("idPhoto"), uploadError
         });
       }
 
-      // Create new account object
       const newAccount = new Account({
         firstName,
         secondName,
@@ -121,12 +118,12 @@ router.post(  "/create-account",checkAuth, upload.single("idPhoto"), uploadError
         user: req.session.user.id, // User ID from the session
       });
 
-      // Save the new client in the database
+  
       const savedAccount = await newAccount.save();
 
       // Send success response
       res.status(201).json({
-        data: savedClient,
+        data: savedAccount,
         message: "Sąskaita sukurta",
       });
     } catch (error) {

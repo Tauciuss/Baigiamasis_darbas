@@ -1,16 +1,13 @@
 import React, { useState, useEffect } from "react"; 
-import { Router, BrowserRouter, Routes, Route, Navigate, Link } from "react-router-dom"; 
-// import Banner from "./components/Banner"; 
-// import CreateClient from "./components/CreateClient"; 
-//import Login from "./components/Login"; 
+import { Router, BrowserRouter, Routes, Route, Navigate, Link } from "react-router-dom";  
+import CreateAccount from "./components/create-account/CreateAccount.jsx";  
 import axios from "axios"; 
-// import ClientList from "./components/ClientList";
-// import AddBalance from "./pages/addBalance/AddBalance"; 
-// import DeductBalance from "./pages/deductBalance/DeductBalance"; 
+import AccountList from "./components/account-list/AccountList.jsx";
+import AddBalance from "./components/add-balance/AddBalance"; 
+import DeductBalance from "./components/deduct-balance/DeductBalance"; 
 
-import Header from './pages/header/Header.jsx';
-import Login from './pages/login/Login';
-import logo from './assets/CatBankLogo.png';
+import Header from './components/header/Header.jsx';
+import Login from './components/login/Login.jsx';
 import './App.css';
 
 function App() {
@@ -34,26 +31,24 @@ function App() {
   return (
     <BrowserRouter>
     {user && <Header user={user} setUser={setUser} />}{" "}
-    {/* Conditionally render Banner if user is authenticated */}
     <Routes>
-      {/* Define application routes */}
       <Route
-        path="/create-client"
-        element={user ? <CreateClient /> : <Navigate to="/login" />}
+        path="/create-account"
+        element={user ? <CreateAccount /> : <Navigate to="/login" />}
       />
       <Route
         path="/login"
         element={
-          user ? <Navigate to="/client-list" /> : <Login setUser={setUser} />
-        } // Redirect to client-list if logged in
+          user ? <Navigate to="/account-list" /> : <Login setUser={setUser} />
+        }
       />
       <Route
         path="*"
-        element={<Navigate to={user ? "/create-client" : "/login"} />} // Redirect to appropriate route based on user authentication
+        element={<Navigate to={user ? "/create-account" : "/login"} />} // Redirect to appropriate route based on user authentication
       />
       <Route
-        path="/client-list"
-        element={user ? <ClientList /> : <Navigate to="/login" />}
+        path="/account-list"
+        element={user ? <AccountList /> : <Navigate to="/login" />}
       />
       <Route
         path="/add-balance/:id"

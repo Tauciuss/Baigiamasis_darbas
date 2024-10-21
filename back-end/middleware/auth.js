@@ -4,11 +4,9 @@ const checkAuth = (req, res, next) => {
     if (req.session && req.session.user) {
       return next(); // User is authenticated, proceed to next middleware or route handler
     }
-  
-    // If no session or user found, return 401 Unauthorized
     return res
       .status(401)
-      .json({ message: "Unauthorized. Please log in to continue." });
+      .json({ message: "Prašome prisijungti." });
   };
   
   export { checkAuth };

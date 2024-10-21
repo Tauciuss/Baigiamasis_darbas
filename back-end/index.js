@@ -10,13 +10,12 @@ const config = dotenv.config().parsed;
 
 // Function to start the server
 const startServer = async () => {
-  // Connect to the database
   try {
-    await mongoose.connect(config.MONGO_URL); // No options needed
+    await mongoose.connect(config.MONGO_URL);
     console.log("Prisijungėte prie duomenų bazės!");
   } catch (error) {
     console.error("Nepavyko prisijungti prie duomenų bazės:", error);
-    return; // Exit if unable to connect to the database
+    return;
   }
 
   // Initialize Express application
@@ -39,21 +38,29 @@ const startServer = async () => {
   app.use(express.json());
 
   // CORS configuration
+  const allowedOrigins = ["http://localhost:5173", "http://localhost:3000"]
   app.use(
     cors({
-      origin: config.DEV_CLIENT_URL, // Allow your frontend origin
-      credentials: true, // Allow credentials to be sent
+      origin: function (origin, callback) {
+        if (allowedOrigins.includes(origin) || !origin) {
+          callback(null, true);
+        } else {
+          callback(new Error('Not allowed by CORS'));
+        }
+      },
+      credentials: true,
     })
   );
+
 
   app.use("/photos", express.static("./uploads"));
 
   app.use("/api/user", user); // User routes
-  app.use("/api/account", account); // Client routes
+  app.use("/api/account", account); //Account routes
 
   // Start the server
   app.listen(config.DEV_PORT, () => {
-    console.log(`Server running on port ${config.DEV_PORT}`);
+    console.log(`Serveris veikia ant: ${config.DEV_PORT} porto`);
   });
 };
 

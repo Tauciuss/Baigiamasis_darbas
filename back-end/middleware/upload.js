@@ -5,16 +5,13 @@ export const storage = multer.diskStorage({
   destination: async (req, file, next) => {
     const uploadsDir = "./uploads"; // Make sure this path exists or is created
     try {
-      // Check if directory exists
       await access(uploadsDir);
     } catch {
-      // Create directory if it doesn't exist
       await mkdir(uploadsDir, { recursive: true });
     }
     next(null, uploadsDir);
   },
   filename: (req, file, next) => {
-    // Create unique filename
     const timestamp = Date.now();
     const randomNum = Math.round(Math.random() * 1e9);
     const originalExt = file.originalname.split(".").pop(); // Get file extension
