@@ -1,5 +1,6 @@
 # CATBANK
-A simple-minimalistic bank created during Full-Stack studies.
+A simple-minimalistic bank created during Full-Stack studies. 
+Mainly using MERN technology pack.
 
 # Installation
 1. Download the files. 
